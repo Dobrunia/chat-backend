@@ -2,10 +2,18 @@ import express from 'express';
 import * as http from 'http';
 import { Server } from 'socket.io';
 import cors from 'cors';
+
+import mongoose from 'mongoose';
+// import authRouter from './authRouter';
+
+
 const PORT = process.env.PORT || 5000;
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+// app.use('/auth', authRouter);
+
 const server = http.createServer(app);
 const db = { messages: [] as string[] };
 const io = new Server(server, {
@@ -23,7 +31,16 @@ io.on('connection', (socket) => {
 });
 server.listen(PORT, () => {
   console.log('Server running on Port ', PORT);
+  try {
+    mongoose.connect(
+      'mongodb+srv://Dobrunia:Dobrunia1@cluster0.iayvue1.mongodb.net/web_messenger'
+    );
+    console.log('Connected to MongoDB');
+  } catch (error) {
+    console.error('Failed to connect to MongoDB:', error);
+  }
 });
+
 // setInterval(() => {
 //   io.to('clock-room').emit('hehe', new Date());
 // }, 1000);
